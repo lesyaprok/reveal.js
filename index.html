@@ -1,49 +1,234 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+	<title>HowBrowsersWork</title>
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/moon.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/monokai.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			</section>
+			<section>
+				<h1>How browsers work</h1>
+				<img data-src="./data/web-browsers.png">
+			</section>
+			<section>
+				<img data-src="./data/web-server.jpg">
+				<p>The main function of a browser is to present the web resource you choose,
+					by requesting it from the server and displaying it in the browser window</p>
+			</section>
+			<section>
+				<section>
+					<h2>The browser's high level structure</h2>
+				</section>
+				<section data-background="./data/layers.png" data-background-size="45%"
+					data-background-repeat="no-repeat">
+				</section>
+			</section>
+			<section>
+				<section>
+					<h1>The rendering engine</h1>
+				</section>
+				<section>
+					<div>The rendering engine is responsible for displaying the requested
+						content on a browser screen.</div>
+					<img data-src="./data/engines.png">
+				</section>
+				<section>
+					<span>The rendering engine will start getting the contents of the requested
+						document from the networking layer.</span>
+					<p>After that, this is the basic flow of the rendering engine:</p>
+					<img data-src="./data/flow.png" width="80%">
+				</section>
+			</section>
+			<section>
+				<section>
+					<h1>Parsing and DOM tree construction</h1>
+				</section>
+				<section>
+					<p>Parsing a document means translating it to a structure the code can use.</p>
+					<p>The result of parsing is usually a tree of nodes that represent the structure
+						of the document.
+						<p>This is called a <strong>parse tree</strong>
+							or a <strong>syntax tree</strong>.</p>
+						</span>
+				</section>
+				<section>
+					<h3>Grammars</h3>
+					<ul>
+						<li>vocabulary</li>
+						<li>syntax rules</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Parsing can be separated into two sub processes:</h3>
+					<ul>
+						<li>lexical analysis (process of breaking the input into tokens)</li>
+						<li>syntax analysis (applying of the language syntax rules)</li>
+					</ul>
+					<h3>Parsers usually divide the work between two components: </h3>
+					<ul>
+						<li>lexer (tokenizer)</li>
+						<li>parser</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Generating parsers automatically</h3>
+					<p>There are tools that can generate a parser. You feed them the grammar
+						of your language – its vocabulary and syntax rules – and they generate a working parser.</p>
+					<ul>
+						<li>Flex (lexer)</li>
+						<li>Bizon (parser)</li>
+					</ul>
+				</section>
+				<section>
+					<ul>
+						<li>HTML not a context free grammar</li>
+						<li>HTML Document Type Definition</li>
+					</ul>
+				</section>
+
+			</section>
+			<section>
+				<section>
+					<h1>Render tree construction</h1>
+				</section>
+				<section>
+					<ul>
+						<li>
+							Render tree generated while DOM tree is constructed
+						</li>
+						<li>This tree is of visual elements in the order in which they will be displayed</li>
+						<li>Firefox calls the elements in the render tree "frames".
+							WebKit uses the term renderer or render object.</li>
+						<li>Each renderer represents a rectangular area</li>
+					</ul>
+				</section>
+				<section>
+					<h5>WebKit code for deciding what type of renderer should be created for a DOM node,
+						according to the display attribute:</h5>
+					<img data-src="./data/display.png">
+
+				</section>
+			</section>
+			<section>
+				<section>
+					<h1>Layout</h1>
+				</section>
+				<section>
+					<h3>Layout</h3>
+					<ul>
+						<li>calculates position and size of rerender</li>
+						<li>most of the time it is possible to compute the geometry in a single pass</li>
+						<li>the coordinate system is relative to the root frame</li>
+						<li>recursive process - begins at the root renderer</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Dirty bit system</h2>
+					<span> A system that makes sure that browsers don't need to do the full
+						layout for every small change</span>
+				</section>
+				<section>
+					<h2>Global and incremental layout</h2>
+					<ul>
+						<li>Global - Layout can be triggered on the entire render tree</li>
+						<li>Incremental - only the dirty renderers will be laid out</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h1>Painting</h1>
+				</section>
+				<section>
+					<p>The render tree is traversed
+						and the renderer's "paint()" method
+						is called to display content on the screen.</p>
+					<ul>
+						<li>Global</li>
+						<li>Incremental</li>
+					</ul>
+				</section>
+				<section>
+					<h3>The painting order</h3>
+					<ul>
+						<li>background color</li>
+						<li>background image</li>
+						<li>border</li>
+						<li>children</li>
+						<li>outline</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h1>CSS visual model</h1>
+				</section>
+				<section>
+					<h4>CSS Box-Model</h4>
+					<img data-src="./data/box-model.png">
+				</section>
+				<section>
+					<h3>Positioning scheme</h3>
+					<ul>
+						<li>Normal</li>
+						<li>Float</li>
+						<li>Absolute</li>
+					</ul>
+				</section>
+			</section>
+			<section>
+				<section>
+
+					<h2>Resources</h2>
+					<a href='https://www.html5rocks.com/en/tutorials/internals/howbrowserswork/'>How Browsers Work:
+						 Behind the scenes of modern web browsers</a>
+
+				</section>
+				<section>
+					<h2>Thank you</h2>
+				</section>
+
+			</section>
 		</div>
+	</div>
 
-		<script src="js/reveal.js"></script>
+	<script src="js/reveal.js"></script>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true }
+			]
+		});
+	</script>
+</body>
+
 </html>
